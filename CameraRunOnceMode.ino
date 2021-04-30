@@ -16,15 +16,15 @@
 #include <BlynkSimpleEsp32.h>
 
 // REPLACE WITH YOUR NETWORK CREDENTIALS
-char ssid[] = "UniFi AP AC Lite";
-char password[] = "JN9ALNHXHFK7ZHJ4QBCH";
-char auth[] = "Aq-jI6c6XwGRHkLC1XB5vvbsK2iEVQ44";
+char ssid[] = "";
+char password[] = "";
+char auth[] = "";
 
 
 // To send Email using Gmail use port 465 (SSL) and SMTP Server smtp.gmail.com
 // YOU MUST ENABLE less secure app option https://myaccount.google.com/lesssecureapps?pli=1
-#define emailSenderAccount    "nuwildcat347@gmail.com"    
-#define emailSenderPassword   "testing347"
+#define emailSenderAccount    ""    
+#define emailSenderPassword   ""
 #define emailRecipient        "jruan777@gmail.com"
 #define smtpServer            "smtp.gmail.com"
 #define smtpServerPort         465 //587 //465
