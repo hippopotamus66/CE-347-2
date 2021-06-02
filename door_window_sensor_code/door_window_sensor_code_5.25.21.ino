@@ -15,7 +15,7 @@ int delayStart;
 
 void setup() {
   //for debugging
-  Serial.begin(9600);
+  //Serial.begin(9600);
 
    
   pinMode(reed_pin,INPUT_PULLUP);
@@ -45,7 +45,7 @@ void loop() {
     unsigned long sensor_status = digitalRead(reed_pin);
     
     //Debugging: log the sensor status here
-    Serial.print(sensor_status);
+    //Serial.print(sensor_status);
   
     //then after the timer is finished, call send_status
     send_status(sensor_status);

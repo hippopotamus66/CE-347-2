@@ -28,10 +28,6 @@ const uint16_t window_door_two = 02;
 const uint16_t alarm_pin_1 = 5;
 const uint16_t alarm_pin_2 = 4;
 
-char ssid[] = "";
-char password[] = "";
-char auth[] = "KCRUeBA60hgY-Hkhfy52R2A3zgAIwO2L";
-
 
 void setup() {
   SPI.begin();
@@ -39,7 +35,6 @@ void setup() {
   network.begin(90, this_node); //(channel, node address)
   pinMode(alarm_pin_1, OUTPUT);
   pinMode(alarm_pin_2, OUTPUT);
-  // pinMode(12, INPUT_PULLDOWN);
 }
 
 void loop() {
@@ -55,22 +50,18 @@ void loop() {
       //this node is a door/window sensor
       if(incomingData == HIGH) {
         turnAlarmOn1();
-        sendTriggerMessage(1,window_door_one);
       }
       else {
         turnAlarmOff1();
-        sendTriggerMessage(0,window_door_one);
       }
     }
     if(header.from_node == window_door_two) {
       //this node is a door/window sensor
       if(incomingData == HIGH) {
         turnAlarmOn2();
-        sendTriggerMessage(1,window_door_two);
       }
       else {
         turnAlarmOff2();
-        sendTriggerMessage(0,window_door_two);
       }
     }
   }
@@ -97,10 +88,5 @@ void turnAlarmOff2() {
 }
 
 void sendMalfunctionMessage(int status) {
-  
-}
-
-void sendTriggerMessage(int status, uint16_t number) {
-//Talk to blynk app somehow
   
 }
