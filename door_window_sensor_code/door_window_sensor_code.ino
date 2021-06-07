@@ -3,28 +3,27 @@
 #include <SPI.h>
 
 RF24 radio(9, 10);               // nRF24L01 (CE,CSN)
-//RF24 radio(7,8); //
 RF24Network network(radio);      // Include the radio in the network
 const uint16_t this_node = 01;   // Address of this node in Octal format ( 04,031, etc)
 const uint16_t mcu = 00;    
-
-//D2 is pin #5 I think
 const uint16_t reed_pin = 4;  
 bool delayRunning = false;
 int delayStart;
 
+
 void setup() {
   //for debugging
   Serial.begin(9600);
-
    
-  pinMode(reed_pin,INPUT);
+  pinMode(reed_pin,INPUT_PULLUP);
   SPI.begin();
   radio.begin();
   network.begin(90, this_node);  //(channel, node address)
   delayStart = millis();   // start delay
   delayRunning = true; // not finished yet
 }
+
+
 void loop() {
   
   //idk how costly this instruction is, but we may not need it(this arduino does not use anything from the network  
