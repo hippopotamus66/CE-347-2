@@ -1,3 +1,16 @@
+//
+// ce347-2 microprocessor systems project 2
+// security system: blynk interface
+//
+// hardware: Arduino Nano IOT 33 (Wifi connectivity)
+//
+// Update the Blynk app in real-time on doors and windows closing 
+// and opening, remotely set off an alarm sound through the Blynk
+// app, and send emails to a recipient when a door or window is 
+// opened while the system is armed. Requires Wifi connection in 
+// order for Blynk and Arduino Nano IOT 33 to communicate.
+
+
 #include "Arduino.h"
 #include <SPI.h>
 #include <Blynk.h>
@@ -7,20 +20,23 @@
 
 
 // REPLACE WITH YOUR NETWORK CREDENTIALS
-char ssid[] = "ARRIS-5E23";   //"MOTOE632";
-char password[] = "NULIBRARY637";   //"97s0vv1tkr";
-char auth[] = "cPVTiodD_S00EWwUmFulqEH1fJo831oa"; //KCRUeBA60hgY-Hkhfy52R2A3zgAIwO2L
+char ssid[] = "";       // name of wifi connection
+char password[] = "";   // wifi password
+
+// REPLACE WITH AUTH CODE GENERATED FROM YOUR BLYNK APP
+char auth[] = "";       // ex: KCRUeBA60hgY-Hkhfy52R2A3zgAIwO2L
 
 
+//
 // IMPORTANT:
 // To send Email using Gmail use port 465 (SSL) and SMTP Server smtp.gmail.com
 // YOU MUST ENABLE less secure app option https://myaccount.google.com/lesssecureapps?pli=1
 // Also update your firmware certificate to include google.com
 //
 // REPLACE WITH YOUR EMAIL ADDRESSES AND PASSWORD
-#define emailSenderAccount    "citruspeel2020@gmail.com"
-#define emailSenderPassword   "Lucky98785"
-#define emailRecipient        "veronicagong2021@u.northwestern.edu"
+#define emailSenderAccount    ""      // securityteam@gmail.com
+#define emailSenderPassword   ""      // securityiscool2021
+#define emailRecipient        ""      // TacoBell@gmail.com
 #define emailSubject          "URGENT: Door/window sensor opened"
 EMailSender emailSend(emailSenderAccount, emailSenderPassword);
 
@@ -34,6 +50,7 @@ EMailSender emailSend(emailSenderAccount, emailSenderPassword);
 int alarm_pin_1 = 5;      // node 01 (window_door_one)
 int alarm_pin_2 = 4;      // node 02 (window_door_two)
 int BUZZER = 21;
+int buzzer_led = 20;      // Debugging: toggle buzzer
 int buzzerPin;            // Blynk virtual pin1 (V1)
 int armPin;               // Blynk virtual pin0 (V0)
 int nodeStatus;
@@ -46,21 +63,21 @@ int previousEmail;
 bool emailSent = false;
 
 
-
 void setup() {
-  Serial.begin(9600);
+  // Debugging
+//  Serial.begin(9600);
 
-  pinMode(4,INPUT_PULLDOWN); // these may not be needed, but this is what got it working so who knows
-  pinMode(5,INPUT_PULLDOWN);
   Blynk.begin(auth, ssid, password); 
 
   int pin1_prevState = 1;
   int pin2_prevState = 1;
   int pin1_currState = 1;
   int pin2_currState = 1;
-  
-  // Define buzzer pin as output
+
+  pinMode(4,INPUT_PULLDOWN);
+  pinMode(5,INPUT_PULLDOWN);
   pinMode(BUZZER, OUTPUT);
+  pinMode(buzzer_led, OUTPUT);
 }
 
 
@@ -81,7 +98,7 @@ void loop() {
   // Note: DisplayState(alarm_pin_1) == HIGH -> OPEN
 //  Serial.println(pin1_prevState);
 //  Serial.println(pin1_currState);
-  Serial.println(DisplayState(alarm_pin_1));
+//  Serial.println(DisplayState(alarm_pin_1));
 
   // Restart timer from when email was sent
   if (emailSent == true) {
@@ -92,10 +109,10 @@ void loop() {
   // Check if system is armed
   if (armPin == HIGH) {
       
-    // At least 10 seconds have passed since last email was sent
+    // Send emails no quicker than every 10 seconds (10000 ms)
     if (!emailSent && ((millis() - previousEmail) >= 10000)) {
 
-      // Sensor that was closed is now open
+      // Send email only when sensor that was closed is now open
       if ((pin1_currState == HIGH && pin1_prevState == LOW) || (pin2_currState == HIGH && pin2_prevState == LOW)) {
 
         // Send email to recipient
@@ -105,7 +122,7 @@ void loop() {
     }
   }
 
-  // Play alarm sound
+  // Play alarm sound if button is pressed in Blynk app
   if (buzzerPin == HIGH) {
     SoundBuzzer();
   } else {
@@ -134,11 +151,14 @@ void UpdateState(int alarm_pin) {
 // Plays alarm buzzer
 void SoundBuzzer() {
   tone(BUZZER,NOTE_FS5);
+  digitalWrite(buzzer_led, HIGH);
   delay(500);
   tone(BUZZER,NOTE_C5);
+  digitalWrite(buzzer_led, LOW);
   delay(400);
 }
 
+// Send email to recipient
 void SendEmail() {
   // Set up email message
   EMailSender::EMailMessage message;
@@ -149,10 +169,10 @@ void SendEmail() {
   EMailSender::Response resp = emailSend.send(emailRecipient, message);
   
   // Debugging: print email status
-  Serial.println("Sending status: ");
-  Serial.println(resp.status);
-  Serial.println(resp.code);
-  Serial.println(resp.desc);
+//  Serial.println("Sending status: ");
+//  Serial.println(resp.status);
+//  Serial.println(resp.code);
+//  Serial.println(resp.desc);
 }
 
 
